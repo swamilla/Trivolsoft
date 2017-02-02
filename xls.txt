@@ -1,0 +1,52 @@
+44.	public String getCellData(String sheetName,String colName,int rowNum){
+45.	try{
+46.	if(rowNum <=0)
+47.	return "";
+48.	int index = workbook.getSheetIndex(sheetName);
+49.	int col_Num=-1;
+50.	if(index==-1)
+51.	return "";
+52.	sheet = workbook.getSheetAt(index);
+53.	row=sheet.getRow(0);
+54.	for(int i=0;i<row.getLastCellNum();i++){
+55.	//System.out.println(row.getCell(i).getStringCellValue().trim());
+56.	if(row.getCell(i).getStringCellValue().trim().equals(colName.trim()))
+57.	col_Num=i;
+58.	}
+59.	if(col_Num==-1)
+60.	return "";
+61.	sheet = workbook.getSheetAt(index);
+62.	row = sheet.getRow(rowNum-1);
+63.	if(row==null)
+64.	return "";
+65.	cell = row.getCell(col_Num);
+66.	if(cell==null)
+67.	return "";
+68.	//System.out.println(cell.getCellType());
+69.	if(cell.getCellType()==Cell.CELL_TYPE_STRING)
+70.	return cell.getStringCellValue();
+71.	else if(cell.getCellType()==Cell.CELL_TYPE_NUMERIC || cell.getCellType()==Cell.CELL_TYPE_FORMULA ){
+72.	String cellText  = String.valueOf(cell.getNumericCellValue());
+73.	if (HSSFDateUtil.isCellDateFormatted(cell)) {
+74.	// format in form of M/D/YY
+75.	double d = cell.getNumericCellValue();
+76.	Calendar cal =Calendar.getInstance();
+77.	cal.setTime(HSSFDateUtil.getJavaDate(d));
+78.	cellText =
+79.	(String.valueOf(cal.get(Calendar.YEAR))).substring(2);
+80.	cellText = cal.get(Calendar.DAY_OF_MONTH) + "/" +
+81.	cal.get(Calendar.MONTH)+1 + "/" +
+82.	cellText;
+83.	//System.out.println(cellText);
+84.	}
+85.	return cellText;
+86.	}else if(cell.getCellType()==Cell.CELL_TYPE_BLANK)
+87.	return "";
+88.	else
+89.	return String.valueOf(cell.getBooleanCellValue());
+90.	}
+91.	catch(Exception e){
+92.	e.printStackTrace();
+93.	return "row "+rowNum+" or column "+colName +" does not exist in xls";
+94.	}
+95.	}
